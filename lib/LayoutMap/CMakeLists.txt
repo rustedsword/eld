@@ -3,6 +3,7 @@ llvm_add_library(ELDLayout STATIC LayoutInfo.cpp LDYAML.cpp
 
 target_link_libraries(
   ELDLayout
+  PRIVATE
   ELDConfig
   ELDFragment
   ELDSupport
