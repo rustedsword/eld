@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+project(eld LANGUAGES C CXX)
+
 set(CMAKE_COLOR_MAKEFILE ON)
 
 # Option to use external LLVM
@@ -16,6 +18,10 @@ if(ELD_USE_EXTERNAL_LLVM)
   endif()
 
   find_package(LLVM REQUIRED CONFIG PATHS ${LLVM_DIR} NO_DEFAULT_PATH)
+
+  # ELD target backends explicitly link LLVM target component archives.  Do
+  # not also link libLLVM, as that registers LLVM command-line options twice.
+  set(LLVM_LINK_LLVM_DYLIB OFF)
 
   message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
   message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")

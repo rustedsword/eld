@@ -78,5 +78,7 @@ if(DEFINED USE_LINKER_ALT_NAME)
   endif()
 endif()
 
-# Create the symlink at installation time.
-install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/ld_eld_symlink.cmake)
+# Create the symlink at installation time when aliases were requested.
+if(ELD_CREATE_SYMLINKS)
+  install(SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/ld_eld_symlink.cmake)
+endif()
