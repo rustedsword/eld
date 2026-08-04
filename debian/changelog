@@ -1,0 +1,16 @@
+eld (22.1.8+gxr1~26.10.1) stonking; urgency=medium
+
+  * Package ELD from the release/22.x branch using Ubuntu's LLVM 22 toolchain,
+    the Ubuntu 26.10 default.
+  * Build the X86 backend under its new upstream name.
+
+ -- Stanislav Aleksandrov <lightofmysoul@gmail.com>  Fri, 23 Oct 2026 23:15:26 +0000
+
+eld (21.1.8+gxr2~26.04.1) resolute; urgency=medium
+
+  * Package ELD 21.1.8 for Ubuntu 26.04 using the system LLVM 21 toolchain.
+  * Enable the Hexagon, AArch64, ARM, RISC-V, and x86-64 linker backends.
+  * Include the linker plugin development API and YAML map utility.
+  * Add the split Polly development package required by LLVM's CMake exports.
+
+ -- Stanislav Aleksandrov <lightofmysoul@gmail.com>  Tue, 04 Aug 2026 13:59:17 +0000

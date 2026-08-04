@@ -1,0 +1,8 @@
+usr/bin/ld.eld
+usr/bin/aarch64-link
+usr/bin/arm-link
+usr/bin/eld-yaml-map-parser
+usr/bin/hexagon-link
+usr/bin/riscv-link
+usr/bin/x86_64-link
+usr/share/eld/templates

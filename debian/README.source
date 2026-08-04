@@ -1,0 +1,29 @@
+ELD Ubuntu/PPA packaging
+========================
+
+This is a native source package built from the LLVM 22-compatible ELD release
+line. Ubuntu's llvm-22-dev package is used directly; LLVM is not bundled.
+
+ELD 22 is published for Ubuntu 26.10 (stonking) only. Ubuntu 26.04 (resolute)
+keeps ELD 21 from the ubuntu_packaging branch on top of native-llvm21.
+
+The ubuntu_packaging_llvm22 branch must always contain exactly one commit on
+top of native-llvm22. Keep packaging edits in that commit:
+
+  git switch ubuntu_packaging_llvm22
+  git add <changed-files>
+  git commit --amend --no-edit
+  git push --force-with-lease rustedsword ubuntu_packaging_llvm22
+
+When native-llvm22 advances, rebase the single packaging commit onto it, then
+amend and force-push with lease. publish.sh verifies the branch, ancestry,
+commit count, and clean-tree invariant before a normal upload.
+
+Launchpad versions are immutable. Before each new upload, add a changelog entry
+with a unique version (increment +gxrN), then amend the existing packaging
+commit. The changelog targets stonking with a ~26.10.N suffix.
+
+Publishing runs in an Ubuntu 26.04 Podman container. On the signing host, use
+./publish.sh --no-upload for a signed validation build and ./publish.sh to sign
+and upload the stonking build to ppa:lightofmysoul/gxr. Without a private key,
+use ./publish.sh --unsigned; unsigned artifacts cannot be uploaded.
