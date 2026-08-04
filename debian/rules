@@ -1,0 +1,56 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/architecture.mk
+
+export CC = clang-21
+export CXX = clang++-21
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
+
+%:
+	dh $@ --buildsystem=cmake+ninja
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_SKIP_RPATH=ON \
+		-DCMAKE_VERBOSE_MAKEFILE=OFF \
+		-DELD_CREATE_SYMLINKS=OFF \
+		-DELD_INCLUDE_TESTS=OFF \
+		-DELD_INSTALL_LINKER_SCRIPT_TEMPLATES=OFF \
+		-DELD_INSTALL_YAML_MAP_PARSER=OFF \
+		-DELD_TARGETS_TO_BUILD="Hexagon;AArch64;ARM;RISCV;x86_64" \
+		-DELD_USE_EXTERNAL_LLVM=ON \
+		-DLLVM_DIR=/usr/lib/llvm-21/lib/cmake/llvm \
+		-DLLVM_PARALLEL_LINK_JOBS=1 \
+		-DLLVM_TABLEGEN_EXE=/usr/lib/llvm-21/bin/llvm-tblgen
+
+override_dh_auto_install:
+	dh_auto_install --destdir=$(CURDIR)/debian/tmp
+
+	# The upstream external build sees every backend shipped by llvm-21. Its
+	# automatic alias step is disabled above; install only backends ELD builds.
+	for alias in hexagon-link aarch64-link arm-link riscv-link x86_64-link; do \
+		ln -s ld.eld debian/tmp/usr/bin/$$alias; \
+	done
+
+	# Install ancillary data in FHS locations and fix the vendor-only shebang.
+	install -d debian/tmp/usr/bin debian/tmp/usr/share/eld/templates
+	sed '1c#!/usr/bin/python3' utils/YAMLMapParser/YAMLMapParser.py \
+		> debian/tmp/usr/bin/eld-yaml-map-parser
+	chmod 0755 debian/tmp/usr/bin/eld-yaml-map-parser
+	cp -a templates/. debian/tmp/usr/share/eld/templates/
+	chmod 0644 debian/tmp/usr/share/eld/templates/*/*.template
+
+	# Make the runtime library co-installable across architectures. The sample
+	# HelloWorld plugin is a build example, not a supported installed artifact.
+	install -d debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
+	mv debian/tmp/usr/lib/libLW.so* debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/
+	rm -f debian/tmp/usr/lib/libHelloWorldPlugin.so*
+
+override_dh_auto_test:
+	@echo "Upstream tests require an integrated LLVM source tree; see debian/tests/smoke."
+
+override_dh_dwz:
+	@echo "Skipping dwz: it does not support Clang 21 DWARF 5 debug sections."
+
+override_dh_missing:
+	dh_missing --fail-missing

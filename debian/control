@@ -1,0 +1,61 @@
+Source: eld
+Section: devel
+Priority: optional
+Maintainer: Stanislav Aleksandrov <lightofmysoul@gmail.com>
+Build-Depends:
+ clang-21,
+ cmake,
+ debhelper-compat (= 13),
+ git,
+ libffi-dev,
+ libpolly-21-dev,
+ libxml2-dev,
+ libzstd-dev,
+ llvm-21-dev,
+ ninja-build,
+ python3,
+ python3-yaml,
+ zlib1g-dev,
+Standards-Version: 4.7.4.0
+Rules-Requires-Root: no
+Homepage: https://github.com/qualcomm/eld
+Vcs-Git: https://github.com/rustedsword/eld.git -b ubuntu_packaging
+Vcs-Browser: https://github.com/rustedsword/eld/tree/ubuntu_packaging
+
+Package: eld
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ python3:any,
+ python3-yaml,
+Description: LLVM-based embedded ELF linker
+ ELD is an ELF linker for embedded software projects. It aims to be compatible
+ with the GNU linker while providing a smaller memory footprint, fast link
+ times, detailed map files, and a plugin API.
+ .
+ This build uses Ubuntu's LLVM 21 libraries and supports Hexagon, AArch64, ARM,
+ RISC-V, and x86-64 targets.
+
+Package: liblw4
+Section: libs
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: ELD linker wrapper runtime library
+ This package provides the shared linker wrapper used by ELD and by ELD
+ plugins at run time.
+
+Package: eld-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ liblw4 (= ${binary:Version}),
+ llvm-21-dev,
+ ${misc:Depends},
+Description: development files for ELD linker plugins
+ This package provides the ELD plugin API headers and the unversioned linker
+ wrapper library needed to build plugins for ELD 21.

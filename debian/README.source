@@ -1,0 +1,29 @@
+ELD Ubuntu/PPA packaging
+========================
+
+This is a native source package built from the LLVM 21-compatible ELD release
+line. Ubuntu's llvm-21-dev package is used directly; LLVM is not bundled.
+
+The ubuntu_packaging branch must always contain exactly one commit on top of
+native-llvm21. Keep packaging edits in that commit:
+
+  git switch ubuntu_packaging
+  git add <changed-files>
+  git commit --amend --no-edit
+  git push --force-with-lease rustedsword ubuntu_packaging
+
+When native-llvm21 advances, rebase the single packaging commit onto it, then
+amend and force-push with lease. publish.sh verifies the branch, ancestry,
+commit count, and clean-tree invariant before a normal upload.
+
+Launchpad versions are immutable. Before each new upload, add a changelog entry
+with a unique version (increment +gxrN), then amend the existing packaging
+commit. The changelog targets resolute with a ~26.04.N suffix; publish.sh
+reuses that entry for every other supported series with its own ~XX.XX.N
+suffix (stonking: ~26.10.N).
+
+Publishing runs in an Ubuntu 26.04 Podman container. On the signing host, use
+./publish.sh --no-upload for a signed validation build and ./publish.sh to sign
+and upload resolute and stonking builds to ppa:lightofmysoul/gxr;
+--series CODENAME limits a run to one series. Without a private key, use
+./publish.sh --unsigned; unsigned artifacts cannot be uploaded.

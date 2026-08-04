@@ -1,0 +1,2 @@
+Tests: smoke
+Depends: @, build-essential, clang-21, llvm-21-dev, python3-yaml

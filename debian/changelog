@@ -1,0 +1,8 @@
+eld (21.1.8+gxr2~26.04.1) resolute; urgency=medium
+
+  * Package ELD 21.1.8 for Ubuntu 26.04 using the system LLVM 21 toolchain.
+  * Enable the Hexagon, AArch64, ARM, RISC-V, and x86-64 linker backends.
+  * Include the linker plugin development API and YAML map utility.
+  * Add the split Polly development package required by LLVM's CMake exports.
+
+ -- Stanislav Aleksandrov <lightofmysoul@gmail.com>  Tue, 04 Aug 2026 13:59:17 +0000

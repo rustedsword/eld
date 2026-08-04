@@ -1,0 +1,31 @@
+#!/bin/sh
+set -eu
+
+for executable in \
+    /usr/bin/ld.eld \
+    /usr/bin/aarch64-link \
+    /usr/bin/arm-link \
+    /usr/bin/hexagon-link \
+    /usr/bin/riscv-link \
+    /usr/bin/x86_64-link \
+    /usr/bin/eld-yaml-map-parser; do
+    test -x "${executable}"
+done
+
+test -f /usr/include/ELD/PluginAPI/PluginBase.h
+test -f /usr/share/eld/templates/staticExecutable/static-executable.lcs.template
+
+ld.eld --version | grep -q '^eld 21\.1'
+eld-yaml-map-parser --help >/dev/null
+
+work="$(mktemp -d)"
+trap 'rm -rf "${work}"' EXIT HUP INT TERM
+printf '%s\n' 'int eld_smoke_symbol = 42;' > "${work}/input.c"
+cc -c "${work}/input.c" -o "${work}/input.o"
+ld.eld -r "${work}/input.o" -o "${work}/linked.o"
+readelf --symbols "${work}/linked.o" | grep -q eld_smoke_symbol
+
+printf '%s\n' \
+    '#include <ELD/PluginAPI/LinkerPlugin.h>' \
+    'int main() { return 0; }' \
+    | clang++-21 -std=c++17 -x c++ -fsyntax-only -

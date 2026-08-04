@@ -52,3 +52,17 @@ autoconf/autom4te.cache
 .vs
 .zed
 .cache
+
+# Debian/PPA build products.
+/build-packages
+/obj-*
+/debian/.debhelper
+/debian/debhelper-build-stamp
+/debian/files
+/debian/*.debhelper
+/debian/*.debhelper.log
+/debian/*.substvars
+/debian/eld
+/debian/eld-dev
+/debian/liblw4
+/debian/tmp
